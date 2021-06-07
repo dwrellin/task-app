@@ -17,7 +17,7 @@ function App() {
           <input 
             type='text' 
             className='p-2 px-5 w-full rounded rounded-r-none' 
-            placeholder='What are you up to?'
+            placeholder='Got bored, made a task app'
             onChange={(e) => setTask(e.target.value)} 
             onKeyUp={(e) => {
               if (!task) return;
