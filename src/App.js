@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { postTask } from './actions';
 
@@ -9,6 +10,9 @@ function App() {
 
   return (
     <div className='bg-gray-200 min-h-screen font-mono flex'>
+      <Helmet>
+        <title>Simple Task App</title>
+      </Helmet>
       <div className="max-w-screen-md m-auto">
         <h1 className='text-5xl antialiased mb-3'>Good day, human!</h1>
         <p className='text-2xl'>What are you up to?</p>
