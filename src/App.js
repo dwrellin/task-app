@@ -41,7 +41,7 @@ function App() {
         </div>
 
         {displayTask && (
-          <ol>
+          <ul>
             {displayTask.map((task, index) => (
               <>
                 <li key={index}>
@@ -49,7 +49,7 @@ function App() {
                 </li>
               </>
             ))}
-          </ol>
+          </ul>
         )}
       </div>
     </div>
