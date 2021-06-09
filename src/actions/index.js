@@ -4,3 +4,10 @@ export const postTask = data => {
     payload: data
   }
 }
+
+export const removeTask = data => {
+  return {
+    type: 'DELETE',
+    task: data
+  }
+}

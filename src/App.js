@@ -1,12 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
-import { postTask } from './actions';
+import { postTask, removeTask } from './actions';
 
 function App() {
   const [task, setTask] = useState('');
+  const [completedTask, setCompletedTask] = useState({
+    taskId: null,
+    isCompleted: false
+  });
+  const [greeting, setGreeting] = useState('');
   const displayTask = useSelector(state => state.postTask);
   const dispatch = useDispatch();
+
+  const completeTheTask = (id, isCompleted) => {
+    setCompletedTask({
+      taskId: id,
+      isCompleted
+    });
+  }
+
+  useEffect(() => {
+    let today = new Date()
+    let currentHour = today.getHours()
+    
+    if (currentHour < 12) {
+      setGreeting('Good morning');
+    } else if (currentHour < 18) {
+      setGreeting('Good afternoon');
+    } else {
+      setGreeting('Good evening');
+    }
+  }, [completedTask])
 
   return (
     <div className='bg-gray-200 min-h-screen font-mono flex'>
@@ -14,7 +39,7 @@ function App() {
         <title>Simple Task App</title>
       </Helmet>
       <div className="max-w-screen-md m-auto">
-        <h1 className='text-5xl antialiased mb-3'>Good day, human!</h1>
+        <h1 className='text-5xl antialiased mb-3'>{greeting}, human!</h1>
         <p className='text-2xl'>What are you up to?</p>
 
         <div className='flex my-10'>
@@ -48,8 +73,37 @@ function App() {
           <ul>
             {displayTask.map((task, index) => (
               <>
-                <li key={index}>
-                  {index + 1}. {task}
+                <li key={index} className='p-3 pl-4 bg-gray-50 rounded flex justify-between items-center'>
+                  <div className='flex flex-grow mr-3'>
+                    <input 
+                      id={index}
+                      type='checkbox' 
+                      className='mr-3' 
+                      onChange={(e) => {
+                        completeTheTask(index, e.target.checked);
+                      }}
+                    />
+
+                    <label
+                      htmlFor={index}
+                      className={`
+                        flex-grow cursor-pointer
+                        ${completedTask.isCompleted && completedTask.taskId === index
+                          ? 'line-through' 
+                          : completedTask.isCompleted && completedTask.taskId !== index
+                            ? 'line-through'
+                            : ''
+                        }
+                      `}>
+                        {task}
+                    </label>
+                  </div>
+
+                  <button 
+                    className='p-1 px-3 bg-red-500 rounded text-white text-sm font-bold'
+                    onClick={() => dispatch(removeTask(task))}>
+                      x
+                  </button>
                 </li>
               </>
             ))}
