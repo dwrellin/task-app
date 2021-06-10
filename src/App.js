@@ -10,10 +10,13 @@ function App() {
     isCompleted: false
   });
   const [greeting, setGreeting] = useState('');
+  // access/get postedTask array from store
   const displayTask = useSelector(state => state.postTask);
+  // used to trigger an action -> structure/sample syntax: dispatch(<action>)
   const dispatch = useDispatch();
 
   const completeTheTask = (id, isCompleted) => {
+    console.log('from completeTheTask before', id, isCompleted);
     setCompletedTask({
       taskId: id,
       isCompleted
@@ -73,8 +76,8 @@ function App() {
           <ul>
             {displayTask.map((task, index) => (
               <>
-                <li key={index} className='p-3 pl-4 bg-gray-50 rounded flex justify-between items-center'>
-                  <div className='flex flex-grow mr-3'>
+                <li key={index} className='p-3 pl-4 bg-gray-50 rounded flex justify-between items-center mb-2'>
+                  <div className='flex flex-grow mr-3 items-center'>
                     <input 
                       id={index}
                       type='checkbox' 
@@ -85,14 +88,13 @@ function App() {
                     />
 
                     <label
+                      onClick={() => console.log(`${task}`, completedTask.isCompleted, index)}
                       htmlFor={index}
                       className={`
                         flex-grow cursor-pointer
-                        ${completedTask.isCompleted && completedTask.taskId === index
-                          ? 'line-through' 
-                          : completedTask.isCompleted && completedTask.taskId !== index
-                            ? 'line-through'
-                            : ''
+                        ${completedTask.isCompleted
+                          ? 'line-through text-green-600' 
+                          : ''
                         }
                       `}>
                         {task}
