@@ -1,16 +1,15 @@
+import { COMPLETE, DELETE, POST } from '../constants/actionTypes';
+
 const taskReducer = (state = [], action) => {
   switch(action.type) {
-    case 'POST':
+    case POST:
       return [...state, action.payload]
 
-    case 'DELETE':
+    case DELETE:
       return state.filter(task => task !== action.task)
 
-    case 'COMPLETE':
-      console.log('from postTask state', state);
-      console.log('from postTask action', action);
-      return state;
-      // break;
+    case COMPLETE:
+      return state.map(task => task.taskId === action.task.taskId ? action.task : task);
 
     default:
       return state

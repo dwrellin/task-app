@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
-import { postTask, removeTask } from './actions';
+import { completeTask, postTask, removeTask } from './actions';
+
+const initialTaskState = {
+  taskId: 0,
+  taskDesc: '',
+  isCompleted: false
+};
 
 function App() {
-  const [task, setTask] = useState('');
-  const [completedTask, setCompletedTask] = useState({
-    taskId: null,
+  const [task, setTask] = useState({
+    taskId: 0,
+    taskDesc: '',
     isCompleted: false
   });
   const [greeting, setGreeting] = useState('');
@@ -14,15 +20,7 @@ function App() {
   const displayTask = useSelector(state => state.postTask);
   // used to trigger an action -> structure/sample syntax: dispatch(<action>)
   const dispatch = useDispatch();
-
-  const completeTheTask = (id, isCompleted) => {
-    console.log('from completeTheTask before', id, isCompleted);
-    setCompletedTask({
-      taskId: id,
-      isCompleted
-    });
-  }
-
+  
   useEffect(() => {
     let today = new Date()
     let currentHour = today.getHours()
@@ -33,8 +31,8 @@ function App() {
       setGreeting('Good afternoon');
     } else {
       setGreeting('Good evening');
-    }
-  }, [completedTask])
+    };
+  }, [greeting]);
 
   return (
     <div className='bg-gray-200 min-h-screen font-mono flex'>
@@ -47,18 +45,27 @@ function App() {
 
         <div className='flex my-10'>
           <input 
+            id={task.taskId}
             type='text' 
             className='p-2 px-5 w-full rounded rounded-r-none' 
             placeholder='Got bored, made a task app'
-            onChange={(e) => setTask(e.target.value)} 
+            onChange={(e) => {
+              setTask({ 
+                ...task,
+                taskDesc: e.target.value 
+              })
+            }} 
             onKeyUp={(e) => {
               if (!task) return;
               if (e.key === 'Enter') {
                 dispatch(postTask(task));
-                setTask('');
+                setTask({
+                  ...initialTaskState,
+                  taskId: task.taskId + 1
+                });
               }
             }}
-            value={task}
+            value={task.taskDesc}
           />
           
           <button 
@@ -66,7 +73,10 @@ function App() {
             onClick={() => {
               if (!task) return;
               dispatch(postTask(task));
-              setTask('');
+              setTask({
+                ...initialTaskState,
+                taskId: task.taskId + 1
+              })
             }}>
               +
           </button>
@@ -76,36 +86,32 @@ function App() {
           <ul>
             {displayTask.map((task, index) => (
               <>
-                <li key={index} className='p-3 pl-4 bg-gray-50 rounded flex justify-between items-center mb-2'>
+                <li key={index} className='p-3 pl-4 bg-gray-50 rounded flex justify-between items-center mb-2' style={{ minHeight: 52 }}>
                   <div className='flex flex-grow mr-3 items-center'>
                     <input 
                       id={index}
                       type='checkbox' 
                       className='mr-3' 
                       onChange={(e) => {
-                        completeTheTask(index, e.target.checked);
+                        dispatch(completeTask(index, task, e.target.checked));
                       }}
                     />
 
                     <label
-                      onClick={() => console.log(`${task}`, completedTask.isCompleted, index)}
                       htmlFor={index}
-                      className={`
-                        flex-grow cursor-pointer
-                        ${completedTask.isCompleted
-                          ? 'line-through text-green-600' 
-                          : ''
-                        }
-                      `}>
-                        {task}
+                      className={`flex-grow cursor-pointer ${task.isCompleted ? 'line-through text-gray-400' : ''}`}
+                    >
+                        {task.taskDesc}
                     </label>
                   </div>
 
-                  <button 
-                    className='p-1 px-3 bg-red-500 rounded text-white text-sm font-bold'
-                    onClick={() => dispatch(removeTask(task))}>
-                      x
-                  </button>
+                  {!task.isCompleted && (
+                    <button 
+                      className='p-1 px-3 bg-red-500 rounded text-white text-sm font-bold'
+                      onClick={() => dispatch(removeTask(task))}>
+                        x
+                    </button>
+                  )}
                 </li>
               </>
             ))}
