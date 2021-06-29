@@ -45,7 +45,6 @@ function App() {
 
         <div className='flex my-10'>
           <input 
-            id={task.taskId}
             type='text' 
             className='p-2 px-5 w-full rounded rounded-r-none' 
             placeholder='Got bored, made a task app'
